@@ -17,11 +17,15 @@ jobs:
         uses: lowlighter/metrics@latest
         with:
           token: ${{ secrets.METRICS_TOKEN }}
-          
+
       - name: Commit and push metrics.svg
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add metrics_renders/github-metrics.svg
-          git commit -m "Update GitHub metrics"
-          git push
+          if [ -f "github-metrics.svg" ]; then
+            git add github-metrics.svg
+            git commit -m "Update GitHub metrics" || echo "No changes to commit"
+            git push
+          else
+            echo "github-metrics.svg not found"
+          fi
